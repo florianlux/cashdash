@@ -1,0 +1,25 @@
+{
+  "name": "cashdash",
+  "version": "1.0.0",
+  "description": "Newsletter dashboard for CashDash",
+  "main": "index.js",
+  "scripts": {
+    "dev": "netlify dev",
+    "build": "echo 'No build step required for static site'",
+    "lint": "echo 'No linting configured'"
+  },
+  "keywords": [
+    "newsletter",
+    "dashboard",
+    "netlify",
+    "supabase"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0"
+  },
+  "devDependencies": {
+    "netlify-cli": "^17.10.1"
+  }
+}
