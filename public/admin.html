@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CashDash Admin</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="admin-panel">
+            <h1>Admin Dashboard</h1>
+            
+            <!-- Login Section -->
+            <div id="login-section" class="login-section">
+                <h2>Login</h2>
+                <form id="login-form">
+                    <input 
+                        type="password" 
+                        id="token-input" 
+                        placeholder="Enter admin token" 
+                        required
+                    >
+                    <button type="submit">Login</button>
+                </form>
+                <div id="login-message" class="message" style="display: none;"></div>
+            </div>
+            
+            <!-- Dashboard Section -->
+            <div id="dashboard-section" class="dashboard-section" style="display: none;">
+                <button id="logout-btn" class="logout-btn">Logout</button>
+                
+                <!-- Stats -->
+                <div class="stats">
+                    <div class="stat-card">
+                        <h3>Total Active</h3>
+                        <p id="total-active" class="stat-value">-</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Last 24h</h3>
+                        <p id="last-24h" class="stat-value">-</p>
+                    </div>
+                </div>
+                
+                <!-- Controls -->
+                <div class="controls">
+                    <select id="status-filter">
+                        <option value="active">Active</option>
+                        <option value="all">All</option>
+                    </select>
+                    <button id="refresh-btn">Refresh</button>
+                    <button id="export-btn">Export CSV</button>
+                </div>
+                
+                <!-- Subscribers Table -->
+                <div class="table-container">
+                    <table id="subscribers-table">
+                        <thead>
+                            <tr>
+                                <th>Email</th>
+                                <th>Created At</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="subscribers-tbody">
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div id="dashboard-message" class="message" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="admin.js"></script>
+</body>
+</html>
