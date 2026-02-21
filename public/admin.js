@@ -75,12 +75,22 @@ exportBtn.addEventListener('click', async () => {
         
         const csv = await response.text();
         
+        // Get filename from Content-Disposition header or use default
+        let filename = 'subscribers.csv';
+        const contentDisposition = response.headers.get('Content-Disposition');
+        if (contentDisposition) {
+            const matches = /filename="?([^"]+)"?/.exec(contentDisposition);
+            if (matches && matches[1]) {
+                filename = matches[1];
+            }
+        }
+        
         // Download CSV
         const blob = new Blob([csv], { type: 'text/csv' });
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `subscribers-${new Date().toISOString().split('T')[0]}.csv`;
+        a.download = filename;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -149,20 +159,42 @@ function renderSubscribers(subscribers) {
         return;
     }
     
-    subscribersTbody.innerHTML = subscribers.map(sub => `
-        <tr>
-            <td>${escapeHtml(sub.email)}</td>
-            <td>${new Date(sub.created_at).toLocaleString()}</td>
-            <td><span class="status-badge ${sub.status}">${sub.status}</span></td>
-            <td>
-                ${sub.status === 'active' ? `
-                    <button class="action-btn" onclick="deactivateSubscriber('${sub.id}')">
-                        Deactivate
-                    </button>
-                ` : ''}
-            </td>
-        </tr>
-    `).join('');
+    subscribersTbody.innerHTML = '';
+    
+    subscribers.forEach(sub => {
+        const row = document.createElement('tr');
+        
+        // Email cell
+        const emailCell = document.createElement('td');
+        emailCell.textContent = sub.email;
+        row.appendChild(emailCell);
+        
+        // Created at cell
+        const createdCell = document.createElement('td');
+        createdCell.textContent = new Date(sub.created_at).toLocaleString();
+        row.appendChild(createdCell);
+        
+        // Status cell
+        const statusCell = document.createElement('td');
+        const statusBadge = document.createElement('span');
+        statusBadge.className = `status-badge ${sub.status}`;
+        statusBadge.textContent = sub.status;
+        statusCell.appendChild(statusBadge);
+        row.appendChild(statusCell);
+        
+        // Actions cell
+        const actionsCell = document.createElement('td');
+        if (sub.status === 'active') {
+            const deactivateBtn = document.createElement('button');
+            deactivateBtn.className = 'action-btn';
+            deactivateBtn.textContent = 'Deactivate';
+            deactivateBtn.addEventListener('click', () => deactivateSubscriber(sub.id));
+            actionsCell.appendChild(deactivateBtn);
+        }
+        row.appendChild(actionsCell);
+        
+        subscribersTbody.appendChild(row);
+    });
 }
 
 async function deactivateSubscriber(id) {
@@ -214,12 +246,3 @@ function showDashboardMessage(text, type) {
 function hideDashboardMessage() {
     dashboardMessage.style.display = 'none';
 }
-
-function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-}
-
-// Make deactivateSubscriber available globally
-window.deactivateSubscriber = deactivateSubscriber;

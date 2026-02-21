@@ -71,10 +71,20 @@ exports.handler = async (event) => {
                     throw error;
                 }
 
-                // Generate CSV
+                // Generate CSV with proper escaping
+                const escapeCsvField = (field) => {
+                    const str = String(field);
+                    if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+                        return `"${str.replace(/"/g, '""')}"`;
+                    }
+                    return str;
+                };
+                
                 const csv = [
                     'email,created_at,status',
-                    ...data.map(row => `${row.email},${row.created_at},${row.status}`)
+                    ...data.map(row => 
+                        `${escapeCsvField(row.email)},${escapeCsvField(row.created_at)},${escapeCsvField(row.status)}`
+                    )
                 ].join('\n');
 
                 return {
